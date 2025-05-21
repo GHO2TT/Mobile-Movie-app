@@ -5,6 +5,7 @@
 //     presets: [
 //       ["babel-preset-expo", { jsxImportSource: "nativewind" }],
 //       "nativewind/babel",
+//       "react-native-reanimated/plugin", // This MUST be the last plugin
 //     ],
 //   };
 // };
@@ -18,12 +19,29 @@
 //   };
 // };
 
-// chat:
+// // chat:
 
+// module.exports = function (api) {
+//   api.cache(true);
+//   return {
+//     presets: ["babel-preset-expo"],
+//     plugins: [
+//       "nativewind/babel",
+//       "react-native-reanimated/plugin", // This MUST be the last plugin
+//     ],
+//   };
+// };
+
+// Deep seek
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ["babel-preset-expo", "module:metro-react-native-babel-preset"],
-    plugins: ["nativewind/babel", "react-native-reanimated/plugin"],
+    presets: [
+      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
+      "nativewind/babel",
+    ],
+    plugins: [
+      "react-native-reanimated/plugin", // This MUST be last
+    ],
   };
 };

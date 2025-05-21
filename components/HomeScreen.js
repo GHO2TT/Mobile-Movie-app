@@ -15,10 +15,15 @@ import {
 import { styles } from "../theme";
 import TrendingMovies from "./TrendingMovies.js";
 import { useState } from "react";
+import Movielist from "./MovieList.js";
+import Loading from "./Loading.js";
 
 const ios = Platform.OS === "ios";
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [trending, setTrending] = useState(["test1", "test2", "test3"]);
+  const [upcoming, setUpcoming] = useState(["test1", "test2", "test3"]);
+  const [topRated, setTopRated] = useState(["test1", "test2", "test3"]);
+  const [loading, setloading] = useState(false);
   return (
     <View className="flex-1 bg-neutral-800">
       {/* searchbar and logo */}
@@ -29,18 +34,35 @@ const HomeScreen = () => {
           <Text className="text-white text-3xl font-bold">
             <Text style={styles.text}>M</Text>ovies
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Search")}>
             <MagnifyingGlassIcon size={30} strokeWidth={2} color="white" />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 10 }}
-      >
-        <TrendingMovies data={trending} />
-      </ScrollView>
-      {/* <Text>HomeScreen</Text> */}
+      {loading ? (
+        <Loading />
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 10 }}
+        >
+          {/* Trending Movies */}
+
+          <TrendingMovies data={trending} />
+
+          <View style={{ height: 90 }} />
+
+          {/* Upcoming movies  */}
+          <Movielist title="Upcoming" data={upcoming} />
+
+          <View style={{ height: 20 }} />
+
+          {/* TopRated movies  */}
+          <Movielist title="Top Rated" data={topRated} />
+
+          <View style={{ height: 20 }} />
+        </ScrollView>
+      )}
     </View>
   );
 };

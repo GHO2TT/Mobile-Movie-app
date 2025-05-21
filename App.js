@@ -6,7 +6,6 @@ import "./global.css";
 export default function App() {
   return (
     <>
-      {/* <StatusBar style="light" /> */}
       <AppNavigation />
     </>
   );

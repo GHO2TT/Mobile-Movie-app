@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import {
   Dimensions,
   Text,
@@ -5,16 +6,29 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from "react-native";
-
 import Carousel from "react-native-reanimated-carousel";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
-function MovieCard({ item }) {
+function MovieCard({ item, indexKey }) {
+  const navigation = useNavigation();
+
+  function handlePress() {
+    // console.log("MovieCard pressed" + item + " Index No:" + indexKey);
+    navigation.navigate("Movie", item);
+  }
   return (
-    <TouchableWithoutFeedback onPress={() => console.log("Movie pressed")}>
-      <View className="bg-gray-800 rounded-lg p-4 w-[300px] h-[200px] justify-center items-center">
-        <Text className="text-white text-center">{item}</Text>
+    <TouchableWithoutFeedback onPress={handlePress}>
+      <View className=" rounded-3xl p-4 w-full h-full justify-center items-center mx-2">
+        <Image
+          source={require("../assets/posters/poster1.png")}
+          className={`rounded-3xl`}
+          style={{
+            width: width * 0.8,
+            height: height * 0.5,
+            borderRadius: 20,
+          }}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -27,23 +41,14 @@ const TrendingMovies = ({ data }) => {
       <View style={{ height: 200 }}>
         <Carousel
           width={width}
-          height={200}
+          height={height * 0.4}
           data={data}
-          autoPlay
+          //   autoPlay
+          loop
+          mode="parallax"
           scrollAnimationDuration={4000}
-          renderItem={({ index }) => (
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: "skyblue",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: 10,
-                marginHorizontal: 10,
-              }}
-            >
-              <Text style={{ fontSize: 24 }}>Item {index + 1}</Text>
-            </View>
+          renderItem={({ index, item }) => (
+            <MovieCard key={item + index} item={item} indexKey={index} />
           )}
         />
       </View>
