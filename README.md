@@ -25,14 +25,6 @@ An elegant movie browsing app built with React Native. It fetches real-time movi
 
 ---
 
-## 📸 Screenshots
-
-| Home | Movie Detail |
-|------|--------------|
-| ![](https://your-link.com/home.png) | ![](https://your-link.com/detail.png) |
-
----
-
 ## 🛠️ Getting Started
 
 ### 📦 Install dependencies
