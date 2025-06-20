@@ -18,6 +18,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import Cast from "./Cast.js";
 import Movielist from "./MovieList.js";
 import Loading from "./Loading.js";
+import {
+  getMovieCredits,
+  getMovieDetails,
+  getSimilarMovies,
+  imageBaseUrl500w,
+  movieFallback,
+} from "../api/moviedb.js";
 
 const { width, height } = Dimensions.get("window");
 const ios = Platform.OS === "ios";
@@ -29,11 +36,50 @@ const MovieScreen = () => {
   const [isFavourite, setIsFavorite] = useState(false);
   const [cast, setCast] = useState([1, 2, 3, 4, 5]);
   const [similarMovies, setSimilarMovies] = useState([1, 2, 3, 4, 5]);
-  const [loading, setloading] = useState(false);
+  const [movieDetails, setMovieDetails] = useState();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigation();
+  const movieId = item.id;
 
   useEffect(() => {
     // call the Movie Details Api
+
+    const fetchMovieDetails = async (movieId) => {
+      setLoading(true);
+      const data = await getMovieDetails(movieId);
+      if (data) {
+        setMovieDetails(data);
+        setLoading(false);
+      }
+      setLoading(false);
+    };
+
+    const fetchMovieCredits = async (movieId) => {
+      setLoading(true);
+      const data = await getMovieCredits(movieId);
+      // console.log("Movie Credits", data);
+      const castData = data.cast;
+      if (data) {
+        setCast(castData);
+        setLoading(false);
+      }
+      setLoading(false);
+    };
+    const fetchSimilarMovies = async (movieId) => {
+      setLoading(true);
+      const data = await getSimilarMovies(movieId);
+      // console.log("Movie Similar", data);
+      // const castData = data.cast;
+      if (data) {
+        setSimilarMovies(data);
+        setLoading(false);
+      }
+      setLoading(false);
+    };
+
+    fetchMovieDetails(movieId);
+    fetchMovieCredits(movieId);
+    fetchSimilarMovies(movieId);
   }, [item]);
   return (
     <>
@@ -72,13 +118,17 @@ const MovieScreen = () => {
             <View className="w-full">
               <View>
                 <Image
-                  source={require("../assets/posters/poster1.png")}
+                  source={
+                    movieDetails?.backdrop_path
+                      ? {
+                          uri: imageBaseUrl500w(movieDetails?.backdrop_path),
+                        }
+                      : require("../assets/posters/poster1.png")
+                  }
                   className=""
-                  // style={{ width, height: height * 0.55,  }}
                   style={{
                     width,
                     height: height * 0.55,
-                    //   resizeMode: "contain",
                   }}
                 />
                 <LinearGradient
@@ -97,45 +147,50 @@ const MovieScreen = () => {
             {/* Movie details */}
             <View style={{ marginTop: -(height * 0.09) }} className="">
               <Text className="text-white text-center text-3xl font-bold tracking-wider">
-                {movieName}
+                {movieDetails?.original_title}
               </Text>
+
               {/* Status, release Date Runtime */}
-              <Text className="text-neutral-400 font-semibold text-base text-center">
-                Release - 2025, 170 mins
-              </Text>
+              {movieDetails?.id ? (
+                <Text className="text-neutral-400 font-semibold text-base text-center">
+                  {movieDetails?.status} -
+                  {movieDetails?.release_date?.split("-")[0]},
+                  {movieDetails?.runtime} mins
+                </Text>
+              ) : null}
+
               {/* Genres */}
               <View className="flex-row justify-center mx-4 space-x-2">
-                <Text className="text-neutral-400 font-semibold text-base text-center">
-                  Horror ~
-                </Text>
-                <Text className="text-neutral-400 font-semibold text-base text-center">
-                  Thriller ~
-                </Text>
-                <Text className="text-neutral-400 font-semibold text-base text-center">
-                  Gore ~
-                </Text>
+                {movieDetails?.genres?.map((genre, index) => {
+                  let showDot = index + 1 != movieDetails?.genres?.length;
+                  return (
+                    <Text
+                      key={index}
+                      className="text-neutral-400 font-semibold text-base text-center"
+                    >
+                      {genre?.name} {showDot ? "~" : null}
+                    </Text>
+                  );
+                })}
               </View>
 
               {/* Description */}
               <Text className="text-neutral-400 mx-4 tracking-wide mt-5">
-                Pressable makes the elements inside pressable, and android
-                ripple is to set a property on a button when the button is
-                pressed (Only for android), For IOS you need to add a new
-                styling object that would appear once the button is pressed:
-                (Note the styling attribute can also take functions and arrays
-                that would run when button is pressed)
+                {movieDetails?.overview}
               </Text>
             </View>
             {/* cast */}
 
-            <Cast navigation={navigate} cast={cast} />
+            {cast.length > 0 && <Cast navigation={navigate} cast={cast} />}
 
             {/* Similar Movies */}
-            <Movielist
-              title="Similar Movies"
-              hideSeeAll={true}
-              data={similarMovies}
-            />
+            {similarMovies.length > 0 && (
+              <Movielist
+                title="Similar Movies"
+                hideSeeAll={true}
+                data={similarMovies}
+              />
+            )}
           </ScrollView>
         )}
       </View>

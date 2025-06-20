@@ -14,16 +14,54 @@ import {
 } from "react-native-heroicons/outline";
 import { styles } from "../theme";
 import TrendingMovies from "./TrendingMovies.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Movielist from "./MovieList.js";
 import Loading from "./Loading.js";
+import {
+  getTopRatedMovies,
+  getTrendingMovies,
+  getUpComingMovies,
+} from "../api/moviedb.js";
 
 const ios = Platform.OS === "ios";
 const HomeScreen = ({ navigation }) => {
-  const [trending, setTrending] = useState(["test1", "test2", "test3"]);
-  const [upcoming, setUpcoming] = useState(["test1", "test2", "test3"]);
-  const [topRated, setTopRated] = useState(["test1", "test2", "test3"]);
+  const [trending, setTrending] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [topRated, setTopRated] = useState([]);
   const [loading, setloading] = useState(false);
+
+  useEffect(() => {
+    const fetchTrendingMovies = async () => {
+      setloading(true);
+      const data = await getTrendingMovies();
+      if (data) {
+        setTrending(data);
+        setloading(false);
+      }
+    };
+    const fetchUpComingMovies = async () => {
+      setloading(true);
+      const data = await getUpComingMovies();
+
+      if (data) {
+        setUpcoming(data);
+        setloading(false);
+      }
+    };
+    const fetchTopRatedMovies = async () => {
+      setloading(true);
+      const data = await getTopRatedMovies();
+
+      if (data) {
+        setTopRated(data);
+        setloading(false);
+      }
+    };
+    fetchTrendingMovies();
+    fetchUpComingMovies();
+    fetchTopRatedMovies();
+  }, []);
+
   return (
     <View className="flex-1 bg-neutral-800">
       {/* searchbar and logo */}
@@ -48,8 +86,7 @@ const HomeScreen = ({ navigation }) => {
         >
           {/* Trending Movies */}
 
-          <TrendingMovies data={trending} />
-
+          {trending.length > 0 && <TrendingMovies data={trending} />}
           <View style={{ height: 90 }} />
 
           {/* Upcoming movies  */}

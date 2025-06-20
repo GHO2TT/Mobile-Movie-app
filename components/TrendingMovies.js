@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { imageBaseUrl500w } from "../api/moviedb";
 
 const { width, height } = Dimensions.get("window");
 
@@ -14,14 +15,13 @@ function MovieCard({ item, indexKey }) {
   const navigation = useNavigation();
 
   function handlePress() {
-    // console.log("MovieCard pressed" + item + " Index No:" + indexKey);
     navigation.navigate("Movie", item);
   }
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
       <View className=" rounded-3xl p-4 w-full h-full justify-center items-center mx-2">
         <Image
-          source={require("../assets/posters/poster1.png")}
+          source={{ uri: imageBaseUrl500w(item.poster_path) }}
           className={`rounded-3xl`}
           style={{
             width: width * 0.8,

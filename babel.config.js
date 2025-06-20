@@ -1,37 +1,3 @@
-// working
-// module.exports = function (api) {
-//   api.cache(true);
-//   return {
-//     presets: [
-//       ["babel-preset-expo", { jsxImportSource: "nativewind" }],
-//       "nativewind/babel",
-//       "react-native-reanimated/plugin", // This MUST be the last plugin
-//     ],
-//   };
-// };
-//
-// other
-// module.exports = function (api) {
-//   api.cache(true);
-//   return {
-//     presets: ["babel-preset-expo"],
-//     plugins: ["nativewind/babel"],
-//   };
-// };
-
-// // chat:
-
-// module.exports = function (api) {
-//   api.cache(true);
-//   return {
-//     presets: ["babel-preset-expo"],
-//     plugins: [
-//       "nativewind/babel",
-//       "react-native-reanimated/plugin", // This MUST be the last plugin
-//     ],
-//   };
-// };
-
 // Deep seek
 module.exports = function (api) {
   api.cache(true);
@@ -41,6 +7,13 @@ module.exports = function (api) {
       "nativewind/babel",
     ],
     plugins: [
+      [
+        "module:react-native-dotenv",
+        {
+          moduleName: "@env",
+          path: ".env",
+        },
+      ],
       "react-native-reanimated/plugin", // This MUST be last
     ],
   };
